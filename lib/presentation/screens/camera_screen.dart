@@ -79,34 +79,39 @@ class _CameraScreenState extends State<CameraScreen> with WidgetsBindingObserver
         future: _initializeControllerFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            return Column(
-              children: [
-                Expanded(
-                  child: _controller!.value.isInitialized
-                      ? CameraPreview(_controller!)
-                      : const Center(child: Text('Camera initializing...')),
-                ),
-                Container(
-                  color: Colors.black,
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      const SizedBox(width: 50),
-                      FloatingActionButton(
-                        heroTag: 'takePicture',
-                        onPressed: _takePicture,
-                        backgroundColor: Colors.white,
-                        child: const Icon(
-                          Icons.camera_alt,
-                          color: Colors.blue,
-                        ),
-                      ),
-                      const SizedBox(width: 50),
-                    ],
+            return SafeArea(
+              child: Column(
+                children: [
+                  Expanded(
+                    child: _controller!.value.isInitialized
+                        ? CameraPreview(_controller!)
+                        : const Center(child: Text('Camera initializing...')),
                   ),
-                ),
-              ],
+                  Container(
+                    color: Colors.black,
+                    padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 0),
+                    child: SafeArea(
+                      top: false,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          const SizedBox(width: 50),
+                          FloatingActionButton(
+                            heroTag: 'takePicture',
+                            onPressed: _takePicture,
+                            backgroundColor: Colors.white,
+                            child: const Icon(
+                              Icons.camera_alt,
+                              color: Colors.blue,
+                            ),
+                          ),
+                          const SizedBox(width: 50),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             );
           } else {
             return const Center(child: CircularProgressIndicator());
