@@ -96,49 +96,58 @@ class _TextAnalysisScreenState extends State<TextAnalysisScreen> {
     super.initState();
     _textEditingController = TextEditingController();
     _processedImage = widget.imageFile;
-    _processImageAndExtractText();
+    // 자동 텍스트 추출 제거: 버튼 클릭 시 추출하도록 변경
   }
   
   @override
   Widget build(BuildContext context) {
-    final textAnalysisProvider = Provider.of<TextAnalysisProvider>(context);
     
     return Scaffold(
       appBar: AppBar(
         title: const Text('Text Analysis'),
         actions: [
-          if (_isTextExtracted && !textAnalysisProvider.isLoading)
-            IconButton(
-              icon: const Icon(Icons.save),
-              onPressed: _saveToHistory,
-            ),
+          IconButton(
+            icon: const Icon(Icons.save_alt),
+            onPressed: _saveToHistory,
+          ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _buildImageSection(),
-              const SizedBox(height: 24),
-              _buildTextExtractionSection(textAnalysisProvider),
-              const SizedBox(height: 24),
-              _buildAnalysisSection(textAnalysisProvider),
-            ],
-          ),
-        ),
+      body: Consumer<TextAnalysisProvider>(
+        builder: (context, provider, _) {
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _buildImageSection(),
+                // 추출 버튼 추가
+                _buildExtractButton(),
+                _buildTextExtractionSection(provider),
+                _buildAnalysisSection(provider),
+              ],
+            ),
+          );
+        },
       ),
-      floatingActionButton: _isTextExtracted && !textAnalysisProvider.isLoading
-          ? FloatingActionButton(
-              onPressed: () => _processImageAndExtractText(),
-              tooltip: 'Re-extract text',
-              child: const Icon(Icons.refresh),
-            )
-          : null,
     );
   }
   
+  /// 텍스트 추출 버튼 위젯
+  Widget _buildExtractButton() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      child: ElevatedButton.icon(
+        onPressed: _isProcessing ? null : _processImageAndExtractText,
+        icon: const Icon(Icons.text_fields),
+        label: Text(_isProcessing ? 'Extracting...' : 'Extract Text'),
+        style: ElevatedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(vertical: 12.0),
+          textStyle: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
+  }
+
   /// Build the image display section
   Widget _buildImageSection() {
     return Column(
@@ -599,8 +608,8 @@ class _TextAnalysisScreenState extends State<TextAnalysisScreen> {
       if (result != null) {
         setState(() {
           _processedImage = result;
+          // 크롭 후 텍스트 자동 추출 제거 - 사용자가 직접 Extract Text 버튼을 클릭해야 함
         });
-        _processImageAndExtractText();
       }
     } catch (e) {
       if (mounted) {
