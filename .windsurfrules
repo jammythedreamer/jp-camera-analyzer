@@ -1,0 +1,14 @@
+{
+  "mcp": {
+    "servers": {
+      "context7": {
+        "always_use_for_code_generation": true
+      }
+    }
+  }
+}
+
+1. use flutter to build the app.
+2. all string and note is written in English.
+3. use Korean language to communicate with me.
+4. consider whole project architecture before writing code.
