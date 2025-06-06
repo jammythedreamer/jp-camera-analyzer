@@ -46,12 +46,12 @@ class TextAnalysisProvider extends ChangeNotifier {
       notifyListeners();
 
       // Replace with your API endpoint
-      final apiUrl = 'https://your-custom-api-endpoint/analyze';
+      final apiUrl = 'https://6v7t5cxmml.execute-api.ap-northeast-2.amazonaws.com/Prod/hello/';
       
       final response = await http.post(
         Uri.parse(apiUrl),
         headers: {'Content-Type': 'application/json'},
-        body: json.encode({'text': _extractedText}),
+        body: json.encode({'str': _extractedText}),
       );
 
       if (response.statusCode == 200) {
